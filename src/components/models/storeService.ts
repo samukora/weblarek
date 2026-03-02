@@ -1,22 +1,32 @@
 import {
-  TStore,
+  IStore,
   IApi,
-} from "/Users/mac/Documents/JavaScript/Practicum Yandex/Projects/weblarek/src/types/index";
-import { Api } from "../base/Api";
-import { API_URL } from "../../utils/constants";
+  IProduct
+} from "../../../src/types/index";
 
 export class StoreService {
-  api: IApi = new Api(API_URL);
-
-  constructor() {}
-
-  async getData() {
-    const response = await this.api.get("/product");
-    return response;
+  apiService;
+  
+  constructor(api: IApi) {
+    this.apiService = api;
   }
 
-  async postOrder(data: TStore) {
-    const result = await this.api.post("/order", data, "POST");
-    return result;
+  async getData(): Promise<IProduct[]> {
+    try {
+      const response: IStore = await this.apiService.get("/product");
+      return response.items;
+    }
+    catch (err) {
+      throw err;
+    }
+  }
+
+  async postOrder(data: IStore): Promise<IStore> {
+    try  {
+      return await this.apiService.post("/order", data, "POST");
+    }
+    catch (err) {
+      throw err;
+    }
   }
 }

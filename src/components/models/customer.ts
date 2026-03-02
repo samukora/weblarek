@@ -1,48 +1,53 @@
 import {
   TPayment,
-  TCustomer,
+  ICustomer,
   TCustomerErrors,
-} from "/Users/mac/Documents/JavaScript/Practicum Yandex/Projects/weblarek/src/types/index";
+} from "../../../src/types/index";
 
 export class Customer {
-  private payment?: TPayment;
-  private email?: string;
-  private phone?: string;
-  private address?: string;
+  private payment: TPayment =  '';
+  private email: string =  '';
+  private phone: string = '';
+  private address: string = '';
 
   constructor() {}
 
   validateInfo(): TCustomerErrors {
     const fieldRules = [
-      { field: "payment", message: "Выберите тип оплаты" },
-      { field: "email", message: "Введите адрес электронной почты" },
-      { field: "phone", message: "Введите номер телефона" },
-      { field: "address", message: "Введите адрес доставки" },
+      { field: "payment", check: (value: string): string => value === ''? 'Выберите тип оплаты': '' },
+      { field: "email", check: (value: string): string => value === ''? 'Введите адрес электронной почты': '' },
+      { field: "phone", check: (value: string): string => value === ''? 'Введите номер телефона': '' },
+      { field: "address", check:(value: string): string => value === ''? 'Введите адрес доставки': '' },
     ] as const;
 
-    return fieldRules.reduce((acc, { field, message }) => {
+    return fieldRules.reduce((acc, { field, check }) => {
       if (!this[field]) {
-        acc[field] = message;
+        acc[field] = check(this[field]);
       }
       return acc;
     }, {} as TCustomerErrors);
   }
 
   clearInfo(): void {
-    delete this.payment;
-    delete this.email;
-    delete this.phone;
-    delete this.address;
+    this.payment = '';
+    this.email = '';
+    this.phone = '';
+    this.address = '';
   }
 
-  getInfo(): Customer {
-    return this;
+  getInfo(): ICustomer {
+    return {
+      payment: this.payment,
+      email: this.email,
+      phone: this.phone,
+      address: this.address,
+    };
   }
 
-  setInfo(customer: TCustomer): void {
-    this.payment = customer.payment;
-    this.email = customer.email;
-    this.phone = customer.phone;
-    this.address = customer.address;
+  setInfo({payment, email, phone, address}: ICustomer): void {
+    if (payment) this.payment = payment;
+    if (email) this.email = email;
+    if (phone) this.phone = phone;
+    if (address) this.address = address;
   }
 }

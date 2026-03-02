@@ -1,50 +1,44 @@
-import { TProduct } from "/Users/mac/Documents/JavaScript/Practicum Yandex/Projects/weblarek/src/types/index";
+import { IProduct } from "../../../src/types/index";
 
 export class Basket {
-  private _listOfProducts: TProduct[] = [];
+  private listOfProducts: IProduct[] = [];
 
-  constructor() {}
+  constructor() { }
 
-  get listOfProducts () {
-    return this.getList();
+  addItem(item: IProduct): void {
+    this.listOfProducts.push(item);
   }
 
-  addItem(item: TProduct): void {
-    this._listOfProducts.push(item);
-  }
-
-  removeItem(item: TProduct): boolean {
-    const indexOfElement = this._listOfProducts.findIndex(
+  removeItem(item: IProduct): void {
+    const indexOfElement = this.listOfProducts.findIndex(
       (elem) => elem.id === item.id,
     );
 
     if (indexOfElement >= 0) {
-      this._listOfProducts.splice(indexOfElement, 1);
-      return true;
+      this.listOfProducts.splice(indexOfElement, 1);
     }
-    return false;
   }
 
   getTotalCount(): number {
-    return this._listOfProducts.length;
+    return this.listOfProducts.length;
   }
 
-  getList(): TProduct[] {
-    return [...this._listOfProducts];
+  getList(): IProduct[] {
+    return [...this.listOfProducts];
   }
 
   getTotalAmount(): number {
-    return this._listOfProducts.reduce(
+    return this.listOfProducts.reduce(
       (acc, elem) => (acc += elem.price || 0),
       0,
     );
   }
 
   checkAvailability(id: string): boolean {
-    return this._listOfProducts.find((elem) => elem.id === id) ? false : true;
+    return this.listOfProducts.some((elem) => elem.id === id);
   }
 
   clearBasket(): void {
-    this._listOfProducts = [];
+    this.listOfProducts = [];
   }
 }

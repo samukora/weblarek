@@ -9,7 +9,7 @@ export interface IApi {
   ): Promise<T>;
 }
 
-export interface TProduct {
+export interface IProduct {
   id: string;
   description: string;
   image: string;
@@ -18,23 +18,18 @@ export interface TProduct {
   price: number | null;
 }
 
-export interface TCustomer {
-  payment?: TPayment;
-  email?: string;
-  phone?: string;
-  address?: string;
+export interface ICustomer {
+  payment: TPayment;
+  email: string;
+  phone: string;
+  address: string;
 }
 
 export type TPayment = "card" | "cash" | "";
 
-export interface TCustomerErrors {
-  payment?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-}
+export type TCustomerErrors = Partial<Record<keyof ICustomer, string>>;
 
-export interface TStore extends TCustomer {
+export interface IStore extends ICustomer {
   total: number;
-  items: string[] | TProduct[];
+  items: IProduct[];
 }

@@ -1,41 +1,31 @@
-import { TProduct } from "/Users/mac/Documents/JavaScript/Practicum Yandex/Projects/weblarek/src/types/index";
+import { IProduct } from "../../../src/types/index";
 
 export class Catalog {
-  private _listOfProducts: TProduct[] = [];
-  private _currentProduct: TProduct | null = null;
+  private listOfProducts: IProduct[] = [];
+  private currentProduct: IProduct | null = null;
 
   constructor() {}
 
-  get listOfProducts() {
-    return this.getList();
+  getList(): IProduct[] {
+    return [...this.listOfProducts];
   }
 
-  get currentProduct() {
-    return this.getCurrentProductDetails();
+  getCurrentProductDetails(): IProduct | null {
+    return this.currentProduct;
   }
 
-  getList(): TProduct[] {
-    return [...this._listOfProducts];
+  getItem(id: string): IProduct | null {
+    return this.listOfProducts.find((elem) => elem.id === id) || null;
   }
 
-  getCurrentProductDetails(): TProduct | null {
-    return { ...this._currentProduct } as TProduct;
-  }
-
-  getItem(id: string): TProduct | null {
-    return this._listOfProducts.find((elem) => elem.id === id) || null;
-  }
-
-  setCurrentProduct(id: string): boolean {
+  setCurrentProduct(id: string): void {
     const currentProduct = this.getItem(id);
     if (currentProduct) {
-      this._currentProduct = currentProduct;
-      return true;
+      this.currentProduct = currentProduct;
     }
-    return false;
   }
 
-  setList(list: TProduct[]): void {
-    this._listOfProducts = [...list];
+  setList(list: IProduct[]): void {
+    this.listOfProducts = list;
   }
 }
