@@ -29,7 +29,17 @@ export type TPayment = "card" | "cash" | "";
 
 export type TCustomerErrors = Partial<Record<keyof ICustomer, string>>;
 
-export interface IStore extends ICustomer {
+export interface IOrder extends ICustomer {
+  total: number;
+  items: string[];
+}
+
+export type IProductResponse = {
   total: number;
   items: IProduct[];
+}
+
+export type IOrderResponse = {
+  id: string;
+  total: number;
 }

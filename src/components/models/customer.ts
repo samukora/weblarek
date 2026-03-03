@@ -45,9 +45,9 @@ export class Customer {
   }
 
   setInfo({payment, email, phone, address}: ICustomer): void {
-    if (payment) this.payment = payment;
-    if (email) this.email = email;
-    if (phone) this.phone = phone;
-    if (address) this.address = address;
+    if (payment !== undefined) this.payment = payment;
+    if (email !== undefined) this.email = email;
+    if (phone !== undefined) this.phone = phone;
+    if (address !== undefined) this.address = address;
   }
 }

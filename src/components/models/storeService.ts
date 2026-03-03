@@ -1,5 +1,7 @@
 import {
-  IStore,
+  IProductResponse,
+  IOrderResponse,
+  IOrder,
   IApi,
   IProduct
 } from "../../../src/types/index";
@@ -13,7 +15,7 @@ export class StoreService {
 
   async getData(): Promise<IProduct[]> {
     try {
-      const response: IStore = await this.apiService.get("/product");
+      const response = await this.apiService.get<IProductResponse>("/product");
       return response.items;
     }
     catch (err) {
@@ -21,9 +23,9 @@ export class StoreService {
     }
   }
 
-  async postOrder(data: IStore): Promise<IStore> {
+  async postOrder(data: IOrder): Promise<IOrderResponse> {
     try  {
-      return await this.apiService.post("/order", data, "POST");
+      return await this.apiService.post<IOrderResponse>("/order", data, "POST");
     }
     catch (err) {
       throw err;

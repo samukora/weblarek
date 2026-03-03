@@ -52,6 +52,7 @@ testCustomer.setInfo({ payment: '', email: '', phone: '+74959379992', address: '
 console.log("Customer info (add phone):", testCustomer.getInfo());
 console.log("Validate errors:", testCustomer.validateInfo());
 testCustomer.setInfo({ payment: 'card', email: 'email@ddd.com', phone: '+74959379993', address: 'Private  st.' });
+console.log("Customer info (add all data):", testCustomer.getInfo());
 console.log("Validate correct:", testCustomer.validateInfo());
 testCustomer.clearInfo();
 console.log("Customer info (after clear):", testCustomer.getInfo());
