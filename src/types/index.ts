@@ -43,3 +43,37 @@ export type IOrderResponse = {
   id: string;
   total: number;
 }
+
+export interface ICard {
+  titleElement: HTMLElement;
+  priceElement: HTMLElement;
+}
+
+export interface ICardPreview extends ICard {
+  imageElement: HTMLElement;
+}
+
+export interface ICardCatalog extends ICardPreview {
+  categoryElement: HTMLElement;
+  descriptionElement: HTMLElement;
+}
+
+export interface IHeader {
+  counter: number;
+  counterElement: HTMLElement;
+  basketElement: HTMLButtonElement;
+}
+
+export interface IFormOrder {
+  paymentElement: HTMLElement;
+  addressElement: HTMLElement;
+}
+
+export interface IFormContacts {
+  emailElement: HTMLElement;
+  phoneelement: HTMLElement;
+}
+
+export interface IModal {
+  modalContentElement: HTMLElement;
+}
