@@ -44,24 +44,9 @@ export type IOrderResponse = {
   total: number;
 }
 
-export interface ICard {
+export interface ICard extends IProduct{
   titleElement: HTMLElement;
   priceElement: HTMLElement;
-}
-
-export interface ICardPreview extends ICard {
-  imageElement: HTMLElement;
-}
-
-export interface ICardCatalog extends ICardPreview {
-  categoryElement: HTMLElement;
-  descriptionElement: HTMLElement;
-}
-
-export interface IHeader {
-  counter: number;
-  counterElement: HTMLElement;
-  basketElement: HTMLButtonElement;
 }
 
 export interface IFormOrder {
@@ -71,7 +56,7 @@ export interface IFormOrder {
 
 export interface IFormContacts {
   emailElement: HTMLElement;
-  phoneelement: HTMLElement;
+  phoneElement: HTMLElement;
 }
 
 export interface IModal {
