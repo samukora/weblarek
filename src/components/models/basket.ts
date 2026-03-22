@@ -1,12 +1,18 @@
 import { IProduct } from "../../../src/types/index";
+import { IEvents } from "../base/Events";
 
 export class Basket {
   private listOfProducts: IProduct[] = [];
+  eventEmitter: IEvents;
 
-  constructor() { }
+  constructor(eventEmitter: IEvents) { 
+    this.eventEmitter = eventEmitter;
+  }
 
   addItem(item: IProduct): void {
     this.listOfProducts.push(item);
+    this.eventEmitter.emit("counter:update");
+    this.eventEmitter.emit("amount:update");
   }
 
   removeItem(item: IProduct): void {
@@ -17,6 +23,8 @@ export class Basket {
     if (indexOfElement >= 0) {
       this.listOfProducts.splice(indexOfElement, 1);
     }
+    this.eventEmitter.emit("counter:update");
+    this.eventEmitter.emit("amount:update");
   }
 
   getTotalCount(): number {

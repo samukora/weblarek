@@ -49,16 +49,6 @@ export interface ICard extends IProduct{
   priceElement: HTMLElement;
 }
 
-export interface IFormOrder {
-  paymentElement: HTMLElement;
-  addressElement: HTMLElement;
-}
-
-export interface IFormContacts {
-  emailElement: HTMLElement;
-  phoneElement: HTMLElement;
-}
-
-export interface IModal {
-  modalContentElement: HTMLElement;
+export interface IActions {
+  onClick: () => void;
 }

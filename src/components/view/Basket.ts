@@ -1,23 +1,43 @@
+import { IActions } from "../../types";
 import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
-import { IEvents } from "../base/Events";
 
 interface IBasket {
-    basketListElements: HTMLElement[];
+  basketListElements: HTMLElement[];
 }
 
 export class BasketView extends Component<IBasket> {
-    eventEmmiter: IEvents;
-    basketListElements: HTMLElement;
+  private basketListElements: HTMLElement;
+  private basketTotalAmountElement: HTMLElement;
+  private basketButtonElement: HTMLButtonElement;
 
-    constructor(container: HTMLElement, eventEmmiter: IEvents) {
-        super(container);
-        this.eventEmmiter = eventEmmiter;
-        this.basketListElements = ensureElement(".basket__list", this.container);
-    }
+  constructor(container: HTMLElement, actions: IActions) {
+    super(container);
+    this.basketListElements = ensureElement<HTMLElement>(
+      ".basket__list",
+      this.container,
+    );
+    this.basketTotalAmountElement = ensureElement<HTMLElement>(
+      ".basket__price",
+      this.container,
+    );
+    this.basketButtonElement = ensureElement<HTMLButtonElement>(
+      ".basket__button",
+      this.container,
+    );
 
-    set basket(items: HTMLElement[]) {
-        this.basketListElements.replaceChildren(...items);
-    }
+    this.basketButtonElement.addEventListener("click", actions.onClick);
+  }
 
+  set basket(items: HTMLElement[]) {
+    this.basketListElements.replaceChildren(...items);
+  }
+
+  set totalAmount(value: number) {
+    this.basketTotalAmountElement.textContent = `${String(value)} синапсов`;
+  }
+
+  set buttonDisable(value: boolean) {
+    this.basketButtonElement.disabled = value;
+  }
 }

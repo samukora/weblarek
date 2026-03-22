@@ -14,10 +14,10 @@ export class Customer {
 
   validateInfo(): TCustomerErrors {
     const fieldRules = [
-      { field: "payment", check: (value: string): string => value === ''? 'Выберите тип оплаты': '' },
-      { field: "email", check: (value: string): string => value === ''? 'Введите адрес электронной почты': '' },
-      { field: "phone", check: (value: string): string => value === ''? 'Введите номер телефона': '' },
-      { field: "address", check:(value: string): string => value === ''? 'Введите адрес доставки': '' },
+      { field: "payment", check: (value: string): string => value === ''? 'Необходимо указать тип оплаты': '' },
+      { field: "email", check: (value: string): string => value === ''? 'Необходимо указать адрес электронной почты': '' },
+      { field: "phone", check: (value: string): string => value === ''? 'Необходимо указать номер телефона': '' },
+      { field: "address", check:(value: string): string => value === ''? 'Необходимо указать адрес': '' },
     ] as const;
 
     return fieldRules.reduce((acc, { field, check }) => {
@@ -44,10 +44,10 @@ export class Customer {
     };
   }
 
-  setInfo({payment, email, phone, address}: ICustomer): void {
-    if (payment !== undefined) this.payment = payment;
-    if (email !== undefined) this.email = email;
-    if (phone !== undefined) this.phone = phone;
-    if (address !== undefined) this.address = address;
+  setInfo(data: Partial<ICustomer>): void {
+    if (data.payment !== undefined) this.payment = data.payment;
+    if (data.email !== undefined) this.email = data.email;
+    if (data.phone !== undefined) this.phone = data.phone;
+    if (data.address !== undefined) this.address = data.address;
   }
 }

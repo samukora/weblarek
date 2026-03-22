@@ -1,27 +1,31 @@
 import { Component } from "../base/Component";
-import { IModal } from "../../types";
+import { IActions } from "../../types";
 import { ensureElement } from "../../utils/utils";
+
+interface IModal {
+  modalContentElement: HTMLElement;
+}
 
 export class Modal extends Component<IModal> {
   private modalContentElement: HTMLElement;
   private closeElement: HTMLElement;
-  private constructor(container: HTMLElement) {
+  private constructor(container: HTMLElement, action: IActions) {
     super(container);
     
     this.modalContentElement = ensureElement(".modal__content", this.container)
     this.closeElement = ensureElement(".modal__close", this.container)
 
     this.closeElement.addEventListener("click", () => {
-      this.close();
+      action.onClick();
     });
   }
 
-  static initModal(container: HTMLElement) {
-    return new Modal(container);
+  static initModal(container: HTMLElement, action: IActions) {
+    return new Modal(container, action);
   }
 
-  set content(div: HTMLElement) {
-    this.modalContentElement.appendChild(div);
+  set content(child: HTMLElement) {
+    this.modalContentElement.replaceChildren(child);
   }
 
   open() {
