@@ -9,14 +9,16 @@ interface IModal {
 export class Modal extends Component<IModal> {
   private modalContentElement: HTMLElement;
   private closeElement: HTMLElement;
-  private constructor(container: HTMLElement, action: IActions) {
+  private constructor(container: HTMLElement, actions: IActions) {
     super(container);
     
-    this.modalContentElement = ensureElement(".modal__content", this.container)
-    this.closeElement = ensureElement(".modal__close", this.container)
+    this.modalContentElement = ensureElement<HTMLElement>(".modal__content", this.container)
+    this.closeElement = ensureElement<HTMLElement>(".modal__close", this.container)
 
-    this.closeElement.addEventListener("click", () => {
-      action.onClick();
+    this.closeElement.addEventListener("click", actions.onClick);
+    this.container.addEventListener("click", (event) => {
+      if (event.target === this.container) 
+        this.close();
     });
   }
 

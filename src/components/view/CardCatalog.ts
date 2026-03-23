@@ -14,11 +14,11 @@ interface ICardActions {
 
 export class CardCatalog extends Card<ICardCatalog> {
   protected categoryElement: HTMLElement;
-  protected imageElement: HTMLElement;
+  protected imageElement: HTMLImageElement;
 
   constructor (container: HTMLElement, actions: ICardActions) {
     super(container,);
-    this.imageElement = ensureElement<HTMLElement>(".card__image", this.container);
+    this.imageElement = ensureElement<HTMLImageElement>(".card__image", this.container);
     this.categoryElement = ensureElement<HTMLElement>(".card__category", this.container);
 
     this.container.addEventListener("click", actions.onClick)
@@ -30,9 +30,7 @@ export class CardCatalog extends Card<ICardCatalog> {
   }
   
   set image(value: string) {
-    this.imageElement.setAttribute("src", `${CDN_URL}/${value}`);
-    this.imageElement.setAttribute("alt", value);
+    this.setImage(this.imageElement, `${CDN_URL}/${value}`, value)
   }
-
   
 }

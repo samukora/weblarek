@@ -7,7 +7,6 @@ import { apiProducts } from "./utils/data";
 import { API_URL } from "./utils/constants";
 import { Api } from "./components/base/Api";
 import { EventEmitter } from "./components/base/Events";
-//import { Presenter } from "./components/presenter/Presenter";
 import { Header } from "./components/view/Header";
 import { BasketView } from "./components/view/Basket";
 
@@ -16,7 +15,7 @@ import { Gallery } from "./components/view/Gallery";
 import { CardCatalog } from "./components/view/CardCatalog";
 import { Modal } from "./components/view/Modal";
 import { CardBasket } from "./components/view/CardBasket";
-import { ICustomer, IProduct, TPayment } from "./types";
+import { ICustomer, IProduct } from "./types";
 import { CardPreview } from "./components/view/CardPreview";
 import { FormOrder } from "./components/view/FormOrder";
 import { FormContacts } from "./components/view/FormContacts";
@@ -28,8 +27,8 @@ const eventEmitter = new EventEmitter();
 
 //---- init model ----//
 const customer = new Customer();
-const catalog = new Catalog(eventEmitter);
-const basketList = new Basket(eventEmitter);
+const catalog = new Catalog();
+const basketList = new Basket();
 
 //----  init templates ----//
 const galleryCardTemplate = document.querySelector(
@@ -56,7 +55,9 @@ const successTemplate = document.querySelector(
 //---- init view ----//
 const gallery = new Gallery(ensureElement(".gallery"), eventEmitter);
 const headerElement = ensureElement(".header");
-const header = new Header(headerElement, eventEmitter);
+const header = new Header(headerElement, {
+  onClick: () => eventEmitter.emit("basket:open"),
+});
 const basket = new BasketView(cloneTemplate(basketTemplate), {
   onClick: () => eventEmitter.emit("basket:order"),
 });
@@ -127,6 +128,7 @@ eventEmitter.on("catalog:change", () => {
 
 eventEmitter.on("card:select", (item: IProduct) => {
   catalog.setCurrentProduct(item.id);
+  eventEmitter.emit("card:preview");
 });
 
 eventEmitter.on("card:preview", () => {
@@ -158,6 +160,8 @@ eventEmitter.on("card:buy", () => {
   const item = catalog.getCurrentProductDetails();
   if (item) {
     basketList.addItem(item);
+    eventEmitter.emit("counter:update");
+    eventEmitter.emit("amount:update");
   }
   eventEmitter.emit("card:preview");
 });
@@ -166,6 +170,8 @@ eventEmitter.on("card:remove", () => {
   const item = catalog.getCurrentProductDetails();
   if (item) {
     basketList.removeItem(item);
+    eventEmitter.emit("counter:update");
+    eventEmitter.emit("amount:update");
   }
   eventEmitter.emit("card:preview");
 });
@@ -199,15 +205,13 @@ eventEmitter.on("order:validate", () => {
   const result = customer.validateInfo();
 
   formOrder.canContinue = result.address || result.payment ? true : false;
-  formOrder.errors = Object.keys(result).reduce(
-    (acc, elem) =>
-      elem === "payment" || elem === "address"
-        ? (acc += `${result[elem]} `)
-        : acc,
-    "",
+  formOrder.errors = Object.fromEntries(
+    Object.entries(result)
+      .filter(elem => (elem[0] === 'address' || elem[0] === 'payment')
+    )
   );
 
-  modalWindow.content = formOrder.render();
+  formOrder.render();
 });
 
 eventEmitter.on("order:submit", () => {
@@ -223,24 +227,27 @@ eventEmitter.on("contacts:validate", () => {
   const result = customer.validateInfo();
 
   formContacts.canContinue = result.email || result.phone ? true : false;
-  formContacts.errors = Object.keys(result).reduce(
-    (acc, elem) =>
-      elem === "email" || elem === "phone"
-        ? (acc += `${result[elem]} `)
-        : acc,
-    "",
+  formContacts.errors = Object.fromEntries(
+    Object.entries(result)
+      .filter(elem => (elem[0] === 'email' || elem[0] === 'phone')
+    )
   );
 
-  modalWindow.content = formContacts.render();
+  formContacts.render();
 });
 
 eventEmitter.on("contacts:submit", () => {
 
   const success = new Success(cloneTemplate(successTemplate), {
-    onClick: () => eventEmitter.emit("modal:close")
+    onClick: () => {
+      basketList.clearBasket();
+      eventEmitter.emit("counter:update");
+      eventEmitter.emit("amount:update");
+      eventEmitter.emit("modal:close")
+    }
   });
   success.totalAmount = basketList.getTotalAmount();
-  
+
   modalWindow.content = success.render();
 });
 //---- run ----//
@@ -250,7 +257,7 @@ const store = new StoreService(api);
 try {
   const catalogItems = await store.getData();
   catalog.setList(catalogItems);
-  console.log("Catalog API:", catalog.getList());
+  eventEmitter.emit("catalog:change");
 } catch (err) {
   throw err;
 }

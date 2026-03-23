@@ -1,13 +1,10 @@
 import { IProduct } from "../../../src/types/index";
-import { IEvents } from "../base/Events";
 
 export class Catalog {
   private listOfProducts: IProduct[] = [];
   private currentProduct: IProduct | null = null;
-  eventEmitter: IEvents;
 
-  constructor(eventEmitter: IEvents) {
-     this.eventEmitter = eventEmitter;
+  constructor() {
   }
 
   getList(): IProduct[] {
@@ -27,12 +24,9 @@ export class Catalog {
     if (currentProduct) {
       this.currentProduct = currentProduct;
     }
-
-    this.eventEmitter.emit("card:preview");
   }
 
   setList(list: IProduct[]): void {
     this.listOfProducts = list;
-    this.eventEmitter.emit("catalog:change");
   }
 }

@@ -164,52 +164,20 @@ Presenter - презентер содержит основную логику п
 | titleElement | HTMLElement | наименование товара |
 | priceElement | HTMLElement | цена товара |
 
-#### Интерфейс ICardPreview 
-Интерфейс описывает расширенную модель данных для карточки товара, на основе интерфейса ICard.
+#### Интерфейс IActions
+Интерфейс описывает базовые функции для обработчиков событий
 
 | Параметр | Тип | Описание |
 | :--- | :--- | :--- |
-| imageElement | HTMLElement | изображение товара |
+| onClick | function | функция для базового события |
 
-#### Интерфейс ICardCatalog 
-Интерфейс описывает расширенную модель данных для карточки товара, на основе интерфейса ICardPreview.
-
-| Параметр | Тип | Описание |
-| :--- | :--- | :--- |
-| categoryElement | HTMLElement | категория товара |
-| descriptionElement | HTMLElement | описание товара |
-
-#### Интерфейс IHeader 
-Интерфейс описывает модель данных для шапки сайта.
+#### Интерфейс IForm
+Интерфейс описывает базовые элементы для форм
 
 | Параметр | Тип | Описание |
 | :--- | :--- | :--- |
-| counter | number | кол-во товаров к корзине |
-| counterElement | HTMLElement | счетчик элементов в корзине |
-| basketElement | HTMLElement | корзина товаров |
-
-#### Интерфейс IFormOrder 
-Интерфейс описывает модель данных для формы заказа.
-
-| Параметр | Тип | Описание |
-| :--- | :--- | :--- |
-| paymentElement | HTMLElement | тип оплаты |
-| addressElement | HTMLElement | адрес доставки |
-
-#### Интерфейс IFormContacts 
-Интерфейс описывает модель данных для формы контактной информации.
-
-| Параметр | Тип | Описание |
-| :--- | :--- | :--- |
-| emailElement | HTMLElement | адрес электронной почты |
-| phoneElement | HTMLElement | номер телефона |
-
-#### Интерфейс IModal 
-Интерфейс описывает модель данных для модального окна.
-
-| Параметр | Тип | Описание |
-| :--- | :--- | :--- |
-| modalContentElement | HTMLElement | контент модального окна |
+| submitButtonElement | HTMLButtonElement | кнопка подтверждения |
+| errorsElement | HTMLElement | блок ошибок |
 
 ### Модели данных
 
@@ -285,13 +253,13 @@ Presenter - презентер содержит основную логику п
 #### Класс Header 
 Класс для отображения шапки сайта.  
 
-Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super(). А также находит внутри переданного компонента елементы с классами "header__basket-counter" и "header__basket" и сохраняет их в классе.  
+Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super() и обьект типа IActions для обработки событий. Также находит внутри переданного компонента елементы с классами "header__basket-counter" и "header__basket", сохраняет их в классе, после чего вешает на последний базовое событие из actions.
 
 
 Поля:  
-`counter: number` - кол-во элементов в корзине.  
-`counterElement: HTMLElement` - счетчик элементов в корзине.  
-`basketElement: HTMLElement` - кнопка корзины.  
+`public counter: number` - кол-во элементов в корзине.  
+`private counterElement: HTMLElement` - счетчик элементов в корзине.  
+`private basketElement: HTMLElement` - кнопка корзины.  
 
 Методы: 
 `set counter(value: number)` - сеттер для кол-ва элементов в корзине.  
@@ -302,93 +270,126 @@ Presenter - презентер содержит основную логику п
 Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super(). А также находит внутри переданного компонента елементы с классами "card__title" и "card__price" и сохраняет их в классе.  
 
 Поля:  
-`titleElement: HTMLElement` - наименование товара.  
-`priceElement: HTMLElement` - стоимость товара.  
+`protected titleElement: HTMLElement` - наименование товара.  
+`protected priceElement: HTMLElement` - стоимость товара.  
 
 Методы:  
+`set title(value: string)` - сеттер для наименования товара.  
+`set price(value: number)` - сеттер для стоимости товара.  
 
 
 #### Класс CardCatalog
 Класс для работы с карточкой товара в каталоге, родительский класс - класс Card<ICardCatalog>.  
 
-Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super(). А также находит внутри переданного компонента елемент с классом "card__image" и сохраняет его в классе.  
+Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super() и обьект типа ICardActions для обработки событий. Также находит внутри переданного компонента елемент с классом "card__image", сохраняет его в классе и вешает базовое событие из actions.  
 
 
 Поля:  
-`imageElement: HTMLElement` - изображение товара.  
+`protected categoryElement: HTMLElement` - категория товара.  
+`protected imageElement: HTMLElement` - изображение товара.  
 
 Методы:  
+`set category(value: string)` - сеттер для категории товара.  
+`set image(value: string)` - сеттер для изображения товара.  
 
 #### Класс CardPreview
 Класс для работы с карточкой товара в режиме просмотра информации, родительский класс - класс Card<ICardPreview>.  
 
-Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super(). А также находит внутри переданного компонента елементы с классами "card__image", "card__category" и "card__text" и сохраняет их в классе.  
+Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super() и обьект типа ICardActions для обработки событий. Также находит внутри переданного компонента елементы с классами "card__image", "card__category", "card__text", "card__button", сохраняет их в классе и вешает на последний базовое событие из actions.  
 
 Поля:  
-`imageElement: HTMLElement` - изображение товара.  
-`categoryElement: HTMLElement` - категория товара.  
-`descriptionElement: HTMLElement` - описание товара.  
+`protected imageElement: HTMLElement` - изображение товара.  
+`protected categoryElement: HTMLElement` - категория товара.  
+`protected descriptionElement: HTMLElement` - описание товара.  
+`protected actionButtonElement: HTMLButtonElement` - кнопка для добавления/удаления товара из корзины покупок.  
 
 Методы:  
+`set image(value: string)` - сеттер для изображения товара.  
+`set category(value: string)` - сеттер для категории товара.  
+`set description(value: string)` - сеттер для описания товара.  
+`set buttonDisable(value: boolean)` - сеттер для недоступности кнопки добавления/удаления товара из корзины покупок.  
+`set buttonText(value: string)` - сеттер для изменения надписи на кнопке добавления/удаления товара из корзины покупок.  
 
 #### Класс CardBasket
 Класс для работы с карточкой товара в корзине, родительский класс - класс Card<ICard>.  
 
-Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super().  
+Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super() и обьект типа IActions для обработки событий. Также находит внутри переданного компонента елемент с классом "card__button", сохраняет его в классе и вешает базовое событие из actions.  
 
 Поля:  
+`private actionButtonElement: HTMLButtonElement;` - кнопка для удаления товара из корзины покупок.  
 
-Методы:  
+Методы: не представлены.  
 
 #### Класс Form
 Абстрактный класс для описания формы, дженерик, родительский класс - класс Component.  
 
-Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super().  
+Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super() и обьект типа IActions для обработки событий. Также находит внутри переданного компонента елементы с классами "form__errors" и "card__button", сохраняет их в классе и вешает на последний базовое событие из actions.   
 
 Поля: 
+`protected submitButtonElement: HTMLButtonElement` - кнопка для продолжения обработки формы.  
+`protected errorsElement: HTMLElement` - блок ошибок.  
 
 Методы:  
+`set canContinue(value: boolean)` - сеттер для определения доступности кнопки.  
+`set errors(values: {})` - сеттер для ошибок валидации.  
+
 
 #### Класс FormOrder
 Класс для работы с формой заказа, родительский класс - класс Form<IFormOrder>.  
 
-Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super(). А также находит внутри переданного компонента елементы по селекторам "order__buttons" и "input[name='address']" и сохраняет их в классе в качестве paymentElement и addressElement соответвенно.  
+Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super() и обьект типа IActions для обработки событий. Также находит внутри переданного компонента елементы с классами "order__buttons", "input[name='address']","button[name='card']", "button[name='cash']", сохраняет их в классе и вешает соответствующие обработчики из actions.
+
+принимает обьект HTMLElement, который передает в родительский конструтор super(). А также находит внутри переданного компонента елементы по селекторам "order__buttons" и "input[name='address']" и сохраняет их в классе в качестве paymentElement и addressElement соответвенно.  
 
 Поля: 
-`paymentElement: HTMLElement` - способ оплаты.  
-`addressElement: HTMLElement`- адрес доcтавки.  
+`private paymentButtonsElement: HTMLElement` - блок с элементами способов оплаты.  
+`private cardButtonElement: HTMLButtonElement` - способ оплаты по карте.  
+`private cashButtonElement: HTMLButtonElement` - способ оплаты за наличный расчет.  
+`private addressElement: HTMLElement` - адрес доcтавки.  
 
 Методы: 
+`set payment(value: TPayment)` - сеттер для установки способа оплаты.  
 
 #### Класс FormContacts
 Класс для работы с формой контактов, родительский класс - класс Form<IFormContacts>.
 
-Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super(). А также находит внутри переданного компонента елементы по селекторам "input[name='email']" и "input[name='phone']" и сохраняет их в классе в качестве emailElement и phoneElement соответвенно.  
+Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super() и обьект типа IActions для обработки событий. Также находит внутри переданного компонента елементы с классами "input[name='email']" и "input[name='phone']", сохраняет их в классе и вешает соответствующие события из actions.  
 
 Поля: 
-`emailElement: HTMLElement` - адрес электронной почты покупателя.  
-`phoneElement: HTMLElement` - номер телефона покупателя.  
+`private emailElement: HTMLElement` - адрес электронной почты покупателя.  
+`private phoneElement: HTMLElement` - номер телефона покупателя.  
 
-Методы: 
+Методы: не представлены.  
 
 #### Класс Modal
 Класс для работы с модальным окном.  
 
-Конструктор: является приватным, для запрета наследования. Принимает обьект HTMLElement, который передает в родительский конструтор super().  
+Конструктор: является приватным, для запрета наследования. Принимает обьект HTMLElement, который передает в родительский конструтор super() и обьект типа IActions для обработки событий. Также находит внутри переданного компонента елементы с классами ".modal__content" и ".modal__close", сохраняет их в классе и вешает соответствующие события из actions.  
 
 Поля: 
-`modalContentElement: HTMLElement;` - элемент для отображения контента.  
+`private modalContentElement: HTMLElement` - элемент для отображения контента.  
+`private closeElement: HTMLElement` - кнопка закрытия модального окна.  
 
 Методы: 
+`static initModal(container: HTMLElement, action: IActions)` - статичский метод для создани обьекта класса.
+`set content(child: HTMLElement)` - сеттер для обновления контента модаьного окна.
+`open()` - метод для открытия модального окна.
+`close()` - метод для закрытия модального окна.
 
-#### Класс Presenter
-Класс для обработки событий.  
+#### Класс BasketView
+Класс для работы с корзиной товаров.
 
-Конструктор: 
+Конструктор: принимает обьект HTMLElement, который передает в родительский конструтор super() и обьект типа IActions для обработки событий. Также находит внутри переданного компонента елементы с классами "basket__list", "basket__price" и "basket__button", сохраняет их в классе и вешает на последний базовое событие из actions.  
 
 Поля: 
+`private basketListElements: HTMLElement` - список товаров в корзине.  
+`private basketTotalAmountElement: HTMLElement` - общая сумма заказа.  
+`private basketButtonElement: HTMLButtonElement` - кнопка оформления заказа.  
 
 Методы: 
+`set basket(items: HTMLElement[])` - сеттер для списка корзины.  
+`set totalAmount(value: number)` - сеттер для общей суммы товаров.  
+`set buttonDisable(value: boolean)` - сеттер для доступности кнопки оформления заказа.  
 
 ### События
 

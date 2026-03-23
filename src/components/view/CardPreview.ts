@@ -14,14 +14,14 @@ interface ICardActions {
 }
 
 export class CardPreview extends Card<ICardPreview> {
-  protected imageElement: HTMLElement;
+  protected imageElement: HTMLImageElement;
   protected categoryElement: HTMLElement;
   protected descriptionElement: HTMLElement;
   protected actionButtonElement: HTMLButtonElement;
 
   constructor (container: HTMLElement, actions: ICardActions) {
     super(container);
-    this.imageElement = ensureElement<HTMLElement>(".card__image", this.container);
+    this.imageElement = ensureElement<HTMLImageElement>(".card__image", this.container);
     this.categoryElement = ensureElement<HTMLElement>(".card__category", this.container);
     this.descriptionElement = ensureElement<HTMLElement>(".card__text", this.container);
     this.actionButtonElement = ensureElement<HTMLButtonElement>(".card__button", this.container);
@@ -30,8 +30,7 @@ export class CardPreview extends Card<ICardPreview> {
   }
 
   set image(value: string) {
-    this.imageElement.setAttribute("src", `${CDN_URL}/${value}`);
-    this.imageElement.setAttribute("alt", value);
+    this.setImage(this.imageElement, `${CDN_URL}/${value}`, value)
   }
 
   set category(value: string){

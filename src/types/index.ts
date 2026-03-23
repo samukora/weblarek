@@ -52,3 +52,8 @@ export interface ICard extends IProduct{
 export interface IActions {
   onClick: () => void;
 }
+
+export interface IForm {
+  submitButtonElement: HTMLButtonElement;
+  errorsElement: HTMLElement;
+}

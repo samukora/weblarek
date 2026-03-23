@@ -4,7 +4,7 @@ import { IActions } from "../../types";
 import { ensureElement } from "../../utils/utils";
 
 export class CardBasket extends Card<ICard> {
-  actionButtonElement: HTMLButtonElement;
+  private actionButtonElement: HTMLButtonElement;
 
   constructor (container: HTMLElement, actions: IActions) {
     super(container);
