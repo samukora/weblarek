@@ -1,23 +1,35 @@
-import {
-  TPayment,
-  ICustomer,
-  TCustomerErrors,
-} from "../../../src/types/index";
+import { TPayment, ICustomer, TCustomerErrors } from "../../../src/types/index";
 
 export class Customer {
-  private payment: TPayment =  '';
-  private email: string =  '';
-  private phone: string = '';
-  private address: string = '';
+  payment: TPayment = "";
+  email: string = "";
+  phone: string = "";
+  address: string = "";
 
   constructor() {}
 
   validateInfo(): TCustomerErrors {
     const fieldRules = [
-      { field: "payment", check: (value: string): string => value === ''? 'Необходимо указать тип оплаты': '' },
-      { field: "email", check: (value: string): string => value === ''? 'Необходимо указать адрес электронной почты': '' },
-      { field: "phone", check: (value: string): string => value === ''? 'Необходимо указать номер телефона': '' },
-      { field: "address", check:(value: string): string => value === ''? 'Необходимо указать адрес': '' },
+      {
+        field: "payment",
+        check: (value: string): string =>
+          value === "" ? "Необходимо указать тип оплаты" : "",
+      },
+      {
+        field: "email",
+        check: (value: string): string =>
+          value === "" ? "Необходимо указать адрес электронной почты" : "",
+      },
+      {
+        field: "phone",
+        check: (value: string): string =>
+          value === "" ? "Необходимо указать номер телефона" : "",
+      },
+      {
+        field: "address",
+        check: (value: string): string =>
+          value === "" ? "Необходимо указать адрес" : "",
+      },
     ] as const;
 
     return fieldRules.reduce((acc, { field, check }) => {
@@ -29,10 +41,10 @@ export class Customer {
   }
 
   clearInfo(): void {
-    this.payment = '';
-    this.email = '';
-    this.phone = '';
-    this.address = '';
+    this.payment = "";
+    this.email = "";
+    this.phone = "";
+    this.address = "";
   }
 
   getInfo(): ICustomer {

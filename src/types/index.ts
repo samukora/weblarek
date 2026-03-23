@@ -37,14 +37,14 @@ export interface IOrder extends ICustomer {
 export type IProductResponse = {
   total: number;
   items: IProduct[];
-}
+};
 
 export type IOrderResponse = {
   id: string;
   total: number;
-}
+};
 
-export interface ICard extends IProduct{
+export interface ICard extends IProduct {
   titleElement: HTMLElement;
   priceElement: HTMLElement;
 }

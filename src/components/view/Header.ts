@@ -15,10 +15,16 @@ export class Header extends Component<IHeader> {
   constructor(container: HTMLElement, actions: IActions) {
     super(container);
 
-    this.counterElement = ensureElement<HTMLElement>(".header__basket-counter", this.container);
-    this.basketElement = ensureElement<HTMLElement>(".header__basket", this.container);
+    this.counterElement = ensureElement<HTMLElement>(
+      ".header__basket-counter",
+      this.container,
+    );
+    this.basketElement = ensureElement<HTMLElement>(
+      ".header__basket",
+      this.container,
+    );
 
-    this.basketElement.addEventListener('click', actions.onClick); 
+    this.basketElement.addEventListener("click", actions.onClick);
   }
 
   set counter(value: number) {

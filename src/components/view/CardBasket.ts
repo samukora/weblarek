@@ -6,10 +6,12 @@ import { ensureElement } from "../../utils/utils";
 export class CardBasket extends Card<ICard> {
   private actionButtonElement: HTMLButtonElement;
 
-  constructor (container: HTMLElement, actions: IActions) {
+  constructor(container: HTMLElement, actions: IActions) {
     super(container);
-    this.actionButtonElement = ensureElement<HTMLButtonElement>(".card__button", this.container);
-    this.actionButtonElement.addEventListener("click", actions.onClick)
+    this.actionButtonElement = ensureElement<HTMLButtonElement>(
+      ".card__button",
+      this.container,
+    );
+    this.actionButtonElement.addEventListener("click", actions.onClick);
   }
-
 }

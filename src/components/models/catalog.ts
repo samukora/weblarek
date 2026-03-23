@@ -4,8 +4,7 @@ export class Catalog {
   private listOfProducts: IProduct[] = [];
   private currentProduct: IProduct | null = null;
 
-  constructor() {
-  }
+  constructor() {}
 
   getList(): IProduct[] {
     return [...this.listOfProducts];
