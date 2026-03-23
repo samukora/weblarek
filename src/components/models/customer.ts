@@ -1,12 +1,16 @@
 import { TPayment, ICustomer, TCustomerErrors } from "../../../src/types/index";
+import { IEvents } from "../base/Events";
 
 export class Customer {
   payment: TPayment = "";
   email: string = "";
   phone: string = "";
   address: string = "";
+  private eventEmitter: IEvents;
 
-  constructor() {}
+  constructor(eventEmitter: IEvents) {
+      this.eventEmitter = eventEmitter;
+    }
 
   validateInfo(): TCustomerErrors {
     const fieldRules = [
@@ -45,6 +49,8 @@ export class Customer {
     this.email = "";
     this.phone = "";
     this.address = "";
+    
+    this.eventEmitter.emit("customer:change");
   }
 
   getInfo(): ICustomer {
@@ -61,5 +67,7 @@ export class Customer {
     if (data.email !== undefined) this.email = data.email;
     if (data.phone !== undefined) this.phone = data.phone;
     if (data.address !== undefined) this.address = data.address;
+
+    this.eventEmitter.emit("customer:change");
   }
 }

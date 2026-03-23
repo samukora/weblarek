@@ -14,19 +14,11 @@ export class StoreService {
   }
 
   async getData(): Promise<IProduct[]> {
-    try {
-      const response = await this.apiService.get<IProductResponse>("/product");
-      return response.items;
-    } catch (err) {
-      throw err;
-    }
+    const response = await this.apiService.get<IProductResponse>("/product");
+    return response.items;
   }
 
   async postOrder(data: IOrder): Promise<IOrderResponse> {
-    try {
-      return await this.apiService.post<IOrderResponse>("/order", data, "POST");
-    } catch (err) {
-      throw err;
-    }
+    return await this.apiService.post<IOrderResponse>("/order", data, "POST");
   }
 }

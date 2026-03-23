@@ -44,9 +44,9 @@ export type IOrderResponse = {
   total: number;
 };
 
-export interface ICard extends IProduct {
-  titleElement: HTMLElement;
-  priceElement: HTMLElement;
+export interface ICard extends IProduct{
+  title: string;
+  price: number | null;
 }
 
 export interface IActions {

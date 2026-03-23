@@ -1,7 +1,7 @@
 import { Component } from "../base/Component";
 
 interface IGallery {
-  galleryListElement: HTMLElement[];
+  galleryList: HTMLElement[];
 }
 
 export class Gallery extends Component<IGallery> {
@@ -9,7 +9,7 @@ export class Gallery extends Component<IGallery> {
     super(container);
   }
 
-  set galleryListElement(items: HTMLElement[]) {
+  set galleryList(items: HTMLElement[]) {
     this.container.replaceChildren(...items);
   }
 }

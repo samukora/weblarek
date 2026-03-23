@@ -27,8 +27,10 @@ export abstract class Form<T> extends Component<T> {
 
   set errors(values: {}) {
     this.errorsElement.textContent = "";
-    Object.values(values).forEach((elem) => {
-      this.errorsElement.insertAdjacentHTML("beforeend", `<p>${elem}</p>`);
-    });
+    //TODO: this.errorsElement.textContent = Object.values(values).join("\n");
+    this.errorsElement.textContent = Object.values(values).join(`\n`);
+    // Object.values(values).forEach((elem) => {
+    //   this.errorsElement.insertAdjacentHTML("beforeend", `<p>${elem}</p>`);
+    // });
   }
 }

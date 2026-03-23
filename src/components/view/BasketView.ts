@@ -3,7 +3,9 @@ import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 
 interface IBasket {
-  basketListElements: HTMLElement[];
+  basket: HTMLElement[];
+  totalAmount: number;
+  buttonDisable: boolean;
 }
 
 export class BasketView extends Component<IBasket> {

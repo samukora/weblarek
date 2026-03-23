@@ -49,13 +49,7 @@ export class FormOrder extends Form<IFormOrder> {
   }
 
   set payment(value: TPayment) {
-    if (value === "card") {
-      this.cardButtonElement.classList.add("button_alt-active");
-      this.cashButtonElement.classList.remove("button_alt-active");
-    }
-    if (value === "cash") {
-      this.cashButtonElement.classList.add("button_alt-active");
-      this.cardButtonElement.classList.remove("button_alt-active");
-    }
+    this.cardButtonElement.classList.toggle("button_alt-active", value === "card");
+    this.cashButtonElement.classList.toggle("button_alt-active", value === "cash"); 
   }
 }

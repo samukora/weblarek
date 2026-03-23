@@ -4,9 +4,11 @@ import { ensureElement } from "../../utils/utils";
 import { CDN_URL, categoryMap } from "../../utils/constants";
 
 interface ICardPreview extends ICard {
-  imageElement: HTMLElement;
-  categoryElement: HTMLElement;
-  descriptionElement: HTMLElement;
+  image: string;
+  category: string;
+  description: string;
+  buttonDisable: boolean;
+  buttonText: string;
 }
 
 interface ICardActions {

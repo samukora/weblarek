@@ -3,8 +3,8 @@ import { IActions, IForm } from "../../types";
 import { ensureElement, debounce } from "../../utils/utils";
 
 export interface IFormContacts extends IForm {
-  emailElement: HTMLElement;
-  phoneElement: HTMLElement;
+  email: string;
+  phone: string;
 }
 
 interface IContactsActions extends IActions {
@@ -35,5 +35,13 @@ export class FormContacts extends Form<IFormContacts> {
       "keyup",
       debounce(actions.onContactsChange, 300),
     );
+  }
+
+  set email(value: string) {
+    this.emailElement.textContent = value;
+  }
+
+  set phone(value: string) {
+    this.phoneElement.textContent = value;
   }
 }

@@ -3,9 +3,9 @@ import { ICard } from "../../types";
 import { ensureElement } from "../../utils/utils";
 import { CDN_URL, categoryMap } from "../../utils/constants";
 
-interface ICardCatalog extends ICard {
-  imageElement: HTMLElement;
-  categoryElement: HTMLElement;
+export interface ICardCatalog extends ICard {
+  image: string;
+  category: string;
 }
 
 interface ICardActions {
