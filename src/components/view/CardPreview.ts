@@ -41,14 +41,13 @@ export class CardPreview extends Card<ICardPreview> {
       ".card__button",
       this.container,
     );
-
     this.actionButtonElement.addEventListener("click", actions.onClick);
   }
-
+  
   set image(value: string) {
     this.setImage(this.imageElement, `${CDN_URL}/${value}`, value);
   }
-
+  
   set category(value: string) {
     this.categoryElement.textContent = value;
     this.categoryElement.className = "card__category";

@@ -1,5 +1,4 @@
 import { Component } from "../base/Component";
-import { IActions } from "../../types";
 import { ensureElement } from "../../utils/utils";
 
 interface IModal {
@@ -9,7 +8,7 @@ interface IModal {
 export class Modal extends Component<IModal> {
   private modalContentElement: HTMLElement;
   private closeElement: HTMLElement;
-  private constructor(container: HTMLElement, actions: IActions) {
+  constructor(container: HTMLElement) {
     super(container);
 
     this.modalContentElement = ensureElement<HTMLElement>(
@@ -21,14 +20,10 @@ export class Modal extends Component<IModal> {
       this.container,
     );
 
-    this.closeElement.addEventListener("click", actions.onClick);
+    this.closeElement.addEventListener("click", () => this.close());
     this.container.addEventListener("click", (event) => {
       if (event.target === this.container) this.close();
     });
-  }
-
-  static initModal(container: HTMLElement, action: IActions) {
-    return new Modal(container, action);
   }
 
   set content(child: HTMLElement) {

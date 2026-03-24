@@ -3,7 +3,7 @@ import { IEvents } from "../base/Events";
 
 export class Catalog {
   private listOfProducts: IProduct[] = [];
-  private currentProduct: IProduct | null = null;
+  private currentProduct?: IProduct;
   private eventEmitter: IEvents;
 
   constructor(eventEmitter: IEvents) {
@@ -14,7 +14,7 @@ export class Catalog {
     return [...this.listOfProducts];
   }
 
-  getCurrentProductDetails(): IProduct | null {
+  getCurrentProductDetails(): IProduct | undefined {
     return this.currentProduct;
   }
 

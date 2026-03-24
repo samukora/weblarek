@@ -154,18 +154,3 @@ export function createElement<T extends HTMLElement>(
   }
   return element;
 }
-
-export function debounce(callback: (event: Event) => void, ms: number) {
-  let lastCallDate: Date;
-  let timerId: number;
-  return function (event: Event) {
-    if (lastCallDate) {
-      const nowDate = new Date();
-      if (Math.abs(lastCallDate.getTime() - nowDate.getTime()) < ms) {
-        clearTimeout(timerId);
-      }
-    }
-    timerId = setTimeout(callback, ms, event);
-    lastCallDate = new Date();
-  };
-}

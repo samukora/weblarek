@@ -49,8 +49,6 @@ export class Customer {
     this.email = "";
     this.phone = "";
     this.address = "";
-    
-    this.eventEmitter.emit("customer:change");
   }
 
   getInfo(): ICustomer {
@@ -63,11 +61,22 @@ export class Customer {
   }
 
   setInfo(data: Partial<ICustomer>): void {
-    if (data.payment !== undefined) this.payment = data.payment;
-    if (data.email !== undefined) this.email = data.email;
-    if (data.phone !== undefined) this.phone = data.phone;
-    if (data.address !== undefined) this.address = data.address;
-
-    this.eventEmitter.emit("customer:change");
+    if (data.payment) {
+      this.payment = data.payment;
+      this.eventEmitter.emit("order:change");
+    }
+    if (data.email !== undefined) {
+      this.email = data.email;
+      this.eventEmitter.emit("contacts:change");
+    }
+    if (data.phone !== undefined) {
+      this.phone = data.phone;
+      this.eventEmitter.emit("contacts:change");
+    }
+    if (data.address !== undefined) {
+      this.address = data.address;
+      this.eventEmitter.emit("order:change");
+    }
   }
+
 }

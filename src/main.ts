@@ -10,7 +10,7 @@ import { Header } from "./components/view/Header";
 import { BasketView } from "./components/view/BasketView";
 import { cloneTemplate, ensureElement } from "./utils/utils";
 import { Gallery } from "./components/view/Gallery";
-import { CardCatalog, ICardCatalog } from "./components/view/CardCatalog";
+import { CardCatalog } from "./components/view/CardCatalog";
 import { Modal } from "./components/view/Modal";
 import { CardBasket } from "./components/view/CardBasket";
 import { ICustomer, IOrderResponse, IProduct } from "./types";
@@ -38,47 +38,34 @@ const successTemplate = ensureElement<HTMLTemplateElement>("#success");
 
 //---- init view ----//
 const gallery = new Gallery(ensureElement(".gallery"));
-const cardPreview = new CardPreview(previewCardTemplate, {
+const cardPreview = new CardPreview(cloneTemplate(previewCardTemplate), {
   onClick: () => {
-    eventEmitter.emit("????");
+    const currentProduct = catalog.getCurrentProductDetails()?.id;
+    if (!currentProduct) {
+      return;
+    }
+    basketList.checkAvailability(currentProduct)
+      ? eventEmitter.emit("card:remove")
+      : eventEmitter.emit("card:buy");
   },
 });
-// const gallery = new Gallery(ensureElement(".gallery"));
-// const headerElement = ensureElement(".header");
-// const header = new Header(headerElement, {
-//   onClick: () => eventEmitter.emit("basket:open"),
-// });
-// const basket = new BasketView(cloneTemplate(basketTemplate), {
-//   onClick: () => eventEmitter.emit("basket:order"),
-// });
-const modalWindow = Modal.initModal(ensureElement("#modal-container"), {
-  onClick: () => eventEmitter.emit("modal:close"),
+const headerElement = ensureElement(".header");
+const header = new Header(headerElement, {
+  onClick: () => eventEmitter.emit("basket:open"),
 });
-// const formOrder = new FormOrder(cloneTemplate(orderTemplate), {
-//   onClick: () => {
-//     eventEmitter.emit("order:submit");
-//   },
-//   onPaymentChange: (event: Event) => {
-//     const button = event.target as HTMLButtonElement;
-//     eventEmitter.emit("order:change", { payment: button.name });
-//   },
-//   onAddressChange: (event: Event) => {
-//     const input = event.target as HTMLInputElement;
-//     eventEmitter.emit("order:change", { address: input.value });
-//   },
-// });
-// const formContacts = new FormContacts(cloneTemplate(contactsTemplate), {
-//   onClick: () => {
-//     eventEmitter.emit("contacts:submit");
-//   },
-//   onContactsChange: (event: Event) => {
-//     const input = event.target as HTMLInputElement;
-//     eventEmitter.emit("contacts:change", { [input.name]: input.value });
-//   },
-// });
+const basket = new BasketView(cloneTemplate(basketTemplate), {
+  onClick: () => eventEmitter.emit("basket:order"),
+});
+const modalWindow = new Modal(ensureElement("#modal-container"));
+const formOrder = new FormOrder(cloneTemplate(orderTemplate), eventEmitter);
+const formContacts = new FormContacts(cloneTemplate(contactsTemplate), eventEmitter);
+const success = new Success(cloneTemplate(successTemplate), {
+  onClick: () => {
+    eventEmitter.emit("success:finish");
+  },
+});
 
 //---- subscribe on events eventEmitter ----//
-
 eventEmitter.on("catalog:change", () => {
   gallery.galleryList = catalog.getList().map((elem) => {
     const card = new CardCatalog(cloneTemplate(galleryCardTemplate), {
@@ -92,225 +79,123 @@ eventEmitter.on("catalog:change", () => {
 
 eventEmitter.on("card:select", (item: IProduct) => {
   catalog.setCurrentProduct(item.id);
-}); 
-
-eventEmitter.on("card:preview", () => {
-  if (catalog.getCurrentProductDetails() !== null) {
-    modalWindow.content = cardPreview.render(catalog.getCurrentProductDetails());
-    modalWindow.open();
-  }
 });
 
-// eventEmitter.on("card:select", (item: IProduct) => {
-//   catalog.setCurrentProduct(item.id);
-//   eventEmitter.emit("card:preview");
-// });
+eventEmitter.on("card:preview", () => {
+  const currentProduct = catalog.getCurrentProductDetails();
+  if (!currentProduct) {
+    return;
+  }
+  const disableButton = !currentProduct.price;
+  cardPreview.buttonDisable = disableButton;
+  cardPreview.buttonText = disableButton
+    ? "Недоступно"
+    : basketList.checkAvailability(currentProduct.id)
+      ? "Удалить из корзины"
+      : "Купить";
+  modalWindow.content = cardPreview.render(currentProduct);
+  modalWindow.open();
+});
 
-// eventEmitter.on("card:preview", () => {
-//   const item = catalog.getCurrentProductDetails();
-//   if (item) {
-//     let actionType: string = "card:buy";
-//     const buttonDisable: boolean = item.price ? false : true;
-//     let buttonText: string = buttonDisable ? "Недоступно" : "Купить";
+eventEmitter.on("card:remove", (event: IProduct) => {
+  const currentProduct = event || catalog.getCurrentProductDetails();
+  if (!currentProduct) {
+    return;
+  }
+  basketList.removeItem(currentProduct);
+  if (!event) modalWindow.close();
+});
 
-//     if (basketList.checkAvailability(item.id)) {
-//       actionType = "card:remove";
-//       buttonText = "Удалить и корзины";
-//     }
+eventEmitter.on("card:buy", () => {
+  const currentProduct = catalog.getCurrentProductDetails();
+  if (!currentProduct) {
+    return;
+  }
+  basketList.addItem(currentProduct);
+  modalWindow.close();
+});
 
-//     const template = cloneTemplate(previewCardTemplate);
-//     const card = new CardPreview(template, {
-//       onClick: () => {
-//         eventEmitter.emit(actionType, item);
-//       },
-//     });
-//     card.buttonDisable = buttonDisable;
-//     card.buttonText = buttonText;
-//     modalWindow.content = card.render();
-//     modalWindow.open();
-//   }
-// });
+eventEmitter.on("basket:open", () => {
+  modalWindow.content = basket.render();
+  modalWindow.open();
+});
 
-// eventEmitter.on("catalog:change", () => {
-//   gallery.galleryListElement = catalog.getList();
-// })
+eventEmitter.on("basket:change", () => {
+  header.counter = basketList.getTotalCount();
+  const basketCardList = basketList.getList().map((elem, index) => {
+    const card = new CardBasket(cloneTemplate(basketCardTemplate), {
+      onClick: () => eventEmitter.emit("card:remove", elem),
+    });
+    card.index = ++index;
+    return card.render(elem);
+  });
 
-// eventEmitter.on("basket:open", () => {
-//   const list = basketList.getList();
-//   const newList = list.map((elem) => {
-//     const template = cloneTemplate(basketCardTemplate);
-//     const card = new CardBasket(template, {
-//       onClick: () => eventEmitter.emit("basketCard:remove", elem),
-//     });
-//     return card.render();
-//   });
+  basket.buttonDisable = basketList.getTotalCount() > 0 ? false : true;
+  basket.totalAmount = basketList.getTotalAmount();
+  basket.basket = basketCardList;
+});
 
-//   basket.buttonDisable = basketList.getTotalCount() > 0 ? false : true;
-//   basket.basket = newList;
+eventEmitter.on("customer:change", (buyer: ICustomer) => {
+  customer.setInfo(buyer);
+});
 
-//   modalWindow.content = basket.render();
-//   modalWindow.open();
-// });
+eventEmitter.on("order:change", () => {
+  formOrder.payment = customer.payment;
 
-// eventEmitter.on("modal:close", () => {
-//   modalWindow.close();
-// });
+  const result = customer.validateInfo();
+  formOrder.canContinue = result.address || result.payment ? true : false;
+  formOrder.errors = Object.fromEntries(
+    Object.entries(result).filter(
+      (elem) => elem[0] === "address" || elem[0] === "payment",
+    ),
+  );
+});
 
-// eventEmitter.on("catalog:change", () => {
-//   const list = catalog.getList();
-//   const newList = list.map((elem) => {
-//     const template = cloneTemplate(galleryCardTemplate);
-//     const card = new CardCatalog(template, {
-//       onClick: () => {
-//         eventEmitter.emit("card:select", elem);
-//       },
-//     });
-//     return card.render();
-//   });
+eventEmitter.on("contacts:change", () => {
+  const result = customer.validateInfo();
+  formContacts.canContinue = result.email || result.phone ? true : false;
+  formContacts.errors = Object.fromEntries(
+    Object.entries(result).filter(
+      (elem) => (elem[0] === "email") || (elem[0] === "phone"),
+    ),
+  );
+});
 
-//   gallery.galleryListElement = newList;
-//   gallery.render();
-// });
+eventEmitter.on("basket:order", () => {
+  modalWindow.content = formOrder.render();
+});
 
-// eventEmitter.on("card:select", (item: IProduct) => {
-//   catalog.setCurrentProduct(item.id);
-//   eventEmitter.emit("card:preview");
-// });
+eventEmitter.on("order:submit", () => {
+  modalWindow.content = formContacts.render();
+});
 
-// eventEmitter.on("card:preview", () => {
-//   const item = catalog.getCurrentProductDetails();
-//   if (item) {
-//     let actionType: string = "card:buy";
-//     const buttonDisable: boolean = item.price ? false : true;
-//     let buttonText: string = buttonDisable ? "Недоступно" : "Купить";
+eventEmitter.on("contacts:submit", () => {
+  const items = basketList.getList().map((elem) => elem.id);
+  const order = Object.assign({}, customer, {
+    total: basketList.getTotalAmount(),
+    items: items,
+  });
+  try {
+    store.postOrder(order).then((response: IOrderResponse) => {
+      success.totalAmount = response.total;
+    });
+    customer.clearInfo();
+    basketList.clearBasket();
+    modalWindow.content = success.render();
+  } catch {
+    console.log("Не удалось отправить заказ на сервер");
+  } 
+});
 
-//     if (basketList.checkAvailability(item.id)) {
-//       actionType = "card:remove";
-//       buttonText = "Удалить и корзины";
-//     }
+eventEmitter.on("success:finish", () => {
+  modalWindow.close();
+});
 
-//     const template = cloneTemplate(previewCardTemplate);
-//     const card = new CardPreview(template, {
-//       onClick: () => {
-//         eventEmitter.emit(actionType, item);
-//       },
-//     });
-//     card.buttonDisable = buttonDisable;
-//     card.buttonText = buttonText;
-//     modalWindow.content = card.render();
-//     modalWindow.open();
-//   }
-// });
-
-// eventEmitter.on("card:buy", () => {
-//   const item = catalog.getCurrentProductDetails();
-//   if (item) {
-//     basketList.addItem(item);
-//     eventEmitter.emit("counter:update");
-//     eventEmitter.emit("amount:update");
-//   }
-//   eventEmitter.emit("card:preview");
-// });
-
-// eventEmitter.on("card:remove", () => {
-//   const item = catalog.getCurrentProductDetails();
-//   if (item) {
-//     basketList.removeItem(item);
-//     eventEmitter.emit("counter:update");
-//     eventEmitter.emit("amount:update");
-//   }
-//   eventEmitter.emit("card:preview");
-// });
-
-// eventEmitter.on("counter:update", () => {
-//   header.counter = basketList.getTotalCount();
-//   header.render();
-// });
-
-// eventEmitter.on("amount:update", () => {
-//   basket.totalAmount = basketList.getTotalAmount();
-//   basket.render();
-// });
-
-// eventEmitter.on("basketCard:remove", (item: IProduct) => {
-//   basketList.removeItem(item);
-//   eventEmitter.emit("basket:open");
-// });
-
-// eventEmitter.on("basket:order", () => {
-//   modalWindow.content = formOrder.render();
-// });
-
-// eventEmitter.on("order:change", (buyer: ICustomer) => {
-//   customer.setInfo(buyer);
-//   formOrder.payment = buyer.payment;
-//   eventEmitter.emit("order:validate");
-// });
-
-// eventEmitter.on("order:validate", () => {
-//   const result = customer.validateInfo();
-
-//   formOrder.canContinue = result.address || result.payment ? true : false;
-//   formOrder.errors = Object.fromEntries(
-//     Object.entries(result).filter(
-//       (elem) => elem[0] === "address" || elem[0] === "payment",
-//     ),
-//   );
-
-//   formOrder.render();
-// });
-
-// eventEmitter.on("order:submit", () => {
-//   modalWindow.content = formContacts.render();
-// });
-
-// eventEmitter.on("contacts:change", (buyer: ICustomer) => {
-//   customer.setInfo(buyer);
-//   eventEmitter.emit("contacts:validate");
-// });
-
-// eventEmitter.on("contacts:validate", () => {
-//   const result = customer.validateInfo();
-
-//   formContacts.canContinue = result.email || result.phone ? true : false;
-//   formContacts.errors = Object.fromEntries(
-//     Object.entries(result).filter(
-//       (elem) => elem[0] === "email" || elem[0] === "phone",
-//     ),
-//   );
-
-//   formContacts.render();
-// });
-
-// eventEmitter.on("contacts:submit", () => {
-//   try {
-//     const items = basketList.getList().map((elem) => elem.id);
-//     const order = Object.assign({}, customer, {
-//       total: basketList.getTotalAmount(),
-//       items: items,
-//     });
-//     store.postOrder(order).then((response: IOrderResponse) => {
-//       const success = new Success(cloneTemplate(successTemplate), {
-//         onClick: () => {
-//           basketList.clearBasket();
-//           eventEmitter.emit("counter:update");
-//           eventEmitter.emit("amount:update");
-//           eventEmitter.emit("modal:close");
-//         },
-//       });
-//       success.totalAmount = response.total;
-//       modalWindow.content = success.render();
-//     });
-//   } catch (err) {
-//     throw err;
-//   }
-// });
 //---- run ----//
 const api = new Api(API_URL);
 const store = new StoreService(api);
-
 try {
   catalog.setList(await store.getData());
 } catch (err) {
-  console.log("Не удалось запросить данные с сервера.")
+  console.log("Не удалось запросить данные с сервера.");
 }

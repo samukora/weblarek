@@ -1,39 +1,42 @@
 import { Form } from "./Form";
-import { IActions, IForm } from "../../types";
-import { ensureElement, debounce } from "../../utils/utils";
+import { IForm } from "../../types";
+import { ensureElement} from "../../utils/utils";
+import { IEvents } from "../base/Events";
 
 export interface IFormContacts extends IForm {
   email: string;
   phone: string;
 }
 
-interface IContactsActions extends IActions {
-  onContactsChange: (event: Event) => void;
-}
-
 export class FormContacts extends Form<IFormContacts> {
-  private emailElement: HTMLElement;
-  private phoneElement: HTMLElement;
+  private emailElement: HTMLInputElement;
+  private phoneElement: HTMLInputElement;
 
-  constructor(container: HTMLElement, actions: IContactsActions) {
-    super(container, actions);
+  constructor(container: HTMLElement, eventEmitter: IEvents) {
+    super(container, {
+      onClick: () => {
+        eventEmitter.emit("contacts:submit");
+      },
+    });
 
-    this.emailElement = ensureElement<HTMLElement>(
+    this.emailElement = ensureElement<HTMLInputElement>(
       "input[name='email']",
       this.container,
     );
-    this.emailElement.addEventListener(
-      "keyup",
-      debounce(actions.onContactsChange, 300),
+    this.emailElement.addEventListener("keyup", () =>
+      eventEmitter.emit("customer:change", {
+        email: this.emailElement.value,
+      }),
     );
 
-    this.phoneElement = ensureElement<HTMLElement>(
+    this.phoneElement = ensureElement<HTMLInputElement>(
       "input[name='phone']",
       this.container,
     );
-    this.phoneElement.addEventListener(
-      "keyup",
-      debounce(actions.onContactsChange, 300),
+    this.phoneElement.addEventListener("keyup", () =>
+      eventEmitter.emit("customer:change", {
+        phone: this.phoneElement.value,
+      }),
     );
   }
 

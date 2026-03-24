@@ -1,6 +1,7 @@
 import { Form } from "./Form";
-import { ensureElement, debounce } from "../../utils/utils";
-import { IActions, IForm, TPayment } from "../../types";
+import { ensureElement } from "../../utils/utils";
+import { IForm, TPayment } from "../../types";
+import { IEvents } from "../base/Events";
 
 interface IFormOrder extends IForm {
   paymentButtonsElement: HTMLElement;
@@ -9,47 +10,67 @@ interface IFormOrder extends IForm {
   addressElement: HTMLElement;
 }
 
-interface IOrderActions extends IActions {
-  onPaymentChange: (event: Event) => void;
-  onAddressChange: (event: Event) => void;
-}
-
 export class FormOrder extends Form<IFormOrder> {
   private paymentButtonsElement: HTMLElement;
   private cardButtonElement: HTMLButtonElement;
   private cashButtonElement: HTMLButtonElement;
-  private addressElement: HTMLElement;
+  private addressElement: HTMLInputElement;
 
-  constructor(container: HTMLElement, actions: IOrderActions) {
-    super(container, actions);
+  constructor(container: HTMLElement, eventEmitter: IEvents) {
+    super(container, {
+      onClick: () => {
+        eventEmitter.emit("order:submit");
+      },
+    });
+
     this.paymentButtonsElement = ensureElement<HTMLElement>(
       ".order__buttons",
       this.container,
-    );
-    this.addressElement = ensureElement<HTMLElement>(
-      "input[name='address']",
-      this.container,
-    );
-    this.addressElement.addEventListener(
-      "keyup",
-      debounce(actions.onAddressChange, 300),
     );
 
     this.cardButtonElement = ensureElement<HTMLButtonElement>(
       "button[name='card']",
       this.paymentButtonsElement,
     );
-    this.cardButtonElement.addEventListener("click", actions.onPaymentChange);
+    this.cardButtonElement.addEventListener("click", () =>
+      eventEmitter.emit("customer:change", {
+        payment: this.cardButtonElement.name,
+      })
+    );
 
     this.cashButtonElement = ensureElement<HTMLButtonElement>(
       "button[name='cash']",
       this.paymentButtonsElement,
     );
-    this.cashButtonElement.addEventListener("click", actions.onPaymentChange);
+    this.cashButtonElement.addEventListener("click", () =>
+      eventEmitter.emit("customer:change", {
+        payment: this.cashButtonElement.name,
+      })
+    );
+
+     this.addressElement = ensureElement<HTMLInputElement>(
+      "input[name='address']",
+      this.container,
+    );
+    this.addressElement.addEventListener("keyup", () =>
+      eventEmitter.emit("customer:change", {
+        address: this.addressElement.value,
+      })
+    );
   }
 
   set payment(value: TPayment) {
-    this.cardButtonElement.classList.toggle("button_alt-active", value === "card");
-    this.cashButtonElement.classList.toggle("button_alt-active", value === "cash"); 
+    this.cardButtonElement.classList.toggle(
+      "button_alt-active",
+      value === "card",
+    );
+    this.cashButtonElement.classList.toggle(
+      "button_alt-active",
+      value === "cash",
+    );
+  }
+
+  set address(value: string) {
+    this.addressElement.textContent = value;
   }
 }
