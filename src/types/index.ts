@@ -54,6 +54,6 @@ export interface IActions {
 }
 
 export interface IForm {
-  submitButtonElement: HTMLButtonElement;
-  errorsElement: HTMLElement;
+  canContinue: boolean;
+  errors: object;
 }

@@ -49,6 +49,7 @@ export class Customer {
     this.email = "";
     this.phone = "";
     this.address = "";
+    this.eventEmitter.emit("customer:clear");
   }
 
   getInfo(): ICustomer {

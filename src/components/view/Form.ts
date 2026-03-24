@@ -21,7 +21,7 @@ export abstract class Form<T> extends Component<T> {
     );
   }
 
-  set canContinue(value: boolean) {
+  set disable(value: boolean) {
     this.submitButtonElement.disabled = value;
   }
 

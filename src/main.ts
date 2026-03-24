@@ -143,7 +143,7 @@ eventEmitter.on("order:change", () => {
   formOrder.payment = customer.payment;
 
   const result = customer.validateInfo();
-  formOrder.canContinue = result.address || result.payment ? true : false;
+  formOrder.disable = result.address || result.payment ? true : false;
   formOrder.errors = Object.fromEntries(
     Object.entries(result).filter(
       (elem) => elem[0] === "address" || elem[0] === "payment",
@@ -153,7 +153,7 @@ eventEmitter.on("order:change", () => {
 
 eventEmitter.on("contacts:change", () => {
   const result = customer.validateInfo();
-  formContacts.canContinue = result.email || result.phone ? true : false;
+  formContacts.disable = result.email || result.phone ? true : false;
   formContacts.errors = Object.fromEntries(
     Object.entries(result).filter(
       (elem) => (elem[0] === "email") || (elem[0] === "phone"),
@@ -161,12 +161,17 @@ eventEmitter.on("contacts:change", () => {
   );
 });
 
+eventEmitter.on("customer:clear", () => {
+  formContacts.render(Object.assign(customer, {disable: true, errors: [] }));
+  formOrder.render(Object.assign(customer, {disable: true, errors: [] }));
+})
+
 eventEmitter.on("basket:order", () => {
-  modalWindow.content = formOrder.render();
+  modalWindow.content = formOrder.render(customer);
 });
 
 eventEmitter.on("order:submit", () => {
-  modalWindow.content = formContacts.render();
+  modalWindow.content = formContacts.render(customer);
 });
 
 eventEmitter.on("contacts:submit", () => {

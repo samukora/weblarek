@@ -4,10 +4,8 @@ import { IForm, TPayment } from "../../types";
 import { IEvents } from "../base/Events";
 
 interface IFormOrder extends IForm {
-  paymentButtonsElement: HTMLElement;
-  cardButtonElement: HTMLButtonElement;
-  cashButtonElement: HTMLButtonElement;
-  addressElement: HTMLElement;
+  payment: TPayment;
+  address: string;
 }
 
 export class FormOrder extends Form<IFormOrder> {
@@ -71,6 +69,6 @@ export class FormOrder extends Form<IFormOrder> {
   }
 
   set address(value: string) {
-    this.addressElement.textContent = value;
+    this.addressElement.value = value;
   }
 }

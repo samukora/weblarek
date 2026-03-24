@@ -41,10 +41,10 @@ export class FormContacts extends Form<IFormContacts> {
   }
 
   set email(value: string) {
-    this.emailElement.textContent = value;
+    this.emailElement.value = value;
   }
 
   set phone(value: string) {
-    this.phoneElement.textContent = value;
+    this.phoneElement.value = value;
   }
 }
